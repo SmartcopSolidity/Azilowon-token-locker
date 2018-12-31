@@ -36,8 +36,7 @@ contract Smartcop_Locker
     }
 
     function getMyLocker() public view returns(address) {
-        if (TTLaddress[msg.sender] != 0x0) { return TTLaddress[msg.sender]; }
-        return 0x0;
+        return TTLaddress[msg.sender]; 
     }
 
     function PrivateSale(address buyerAddress, uint amount) public returns(bool) {
@@ -53,29 +52,34 @@ contract Smartcop_Locker
         AWN.transferFrom(tokOwner, buyerAddress, tamount );
         assignTokens(buyerAddress, amount.sub(tamount), startTime, 2630000, 14);
         emit LockAdvisor(buyerAddress, amount);
+        return true;
     }
     function CompanyReserve(address buyerAddress, uint amount) public returns(bool) {
         // it receive the token  after 6 months, then 20% and then in 15 months the remaining
         assignTokens(buyerAddress, amount ,startTime.add(15780000), 7890000, 5);
         emit LockCompanyReserve(buyerAddress, amount);
+        return true;
     }
 
     function AffiliateMarketing(address buyerAddress, uint amount) public returns(bool) {
         // it receive the tokens 10% immediatly and then 10% each month
         assignTokens(buyerAddress, amount, startTime,2630000, 10);
         emit LockAffiliateMarketing(buyerAddress, amount);
+        return true;
     }
 
     function Cashback(address buyerAddress, uint amount) public returns(bool) {
         // monthly (2630000) 10 months
         assignTokens(buyerAddress, amount, startTime,2630000, 10 );
         emit LockCashBack(buyerAddress, amount);
+        return true;
     }
 
     function StrategicPartners(address buyerAddress, uint amount) public returns(bool) {
         // monthly (2630000) 10 months
         assignTokens(buyerAddress, amount, startTime, 2630000, 10);
         emit LockStrategicPartners(buyerAddress, amount);
+        return true;
     }
 
     function ArbitraryLocker(address buyerAddress, uint amount, uint start, uint period, uint chunks) public returns(bool) {
@@ -84,7 +88,7 @@ contract Smartcop_Locker
     }
 
     function assignTokens(address buyerAddress, uint amount, 
-                                    uint start, uint period, uint chunks ) internal returns(bool) {
+                                    uint start, uint period, uint chunks ) internal returns(address) {
         require(amount <= AWN.allowance(tokOwner, address(this)) ,"Type 1 Not enough Tokens to transfer");
         address ttl1 = getMyLocker();
 
@@ -96,7 +100,7 @@ contract Smartcop_Locker
         AWN.transferFrom(tokOwner, ttl1, amount);
         TTLaddress[buyerAddress] = ttl1;
 
-        return true;
+        return ttl1;
     }
 
 
